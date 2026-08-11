@@ -21,19 +21,36 @@ chose it is pt-BR.
 | English                                        | pt-BR                                               |
 | ---------------------------------------------- | --------------------------------------------------- |
 | Code: identifiers, types, file names           | Business rules (`docs/regras/`)                     |
+| Routes and URLs (`/flow`, `/email-templates`)  | Interface labels (menu, títulos, botões)            |
 | Log messages and `LOG_IDENTIFIER`              | Product decisions (`docs/dunning.md`)               |
 | Error **codes** (`identity.invalid_email_otp`) | Error **messages** — the pt-BR catalogue per module |
 | Skills (`.claude/skills/`)                     | Commits, issues, PR descriptions                    |
 | Design docs (`docs/identity.md`)               | Anything a customer could read                      |
 
-Two consequences worth spelling out, because both have already caused a wrong guess:
+Three consequences worth spelling out, because each one has already caused a wrong guess:
 
 - **A design doc and a business-rules doc about the same module are not duplicates.** One says the
   refresh token is opaque and rotates per family; the other says your session lasts 30 days and
   drops if someone reuses a credential. Different readers, different languages, both needed.
-- **Don't translate the domain vocabulary.** "Régua", "bandeira", "recusa" are the words the team
-  actually uses, and this is a BR-specific domain (Pix, LGPD, limites de bandeira). Translating
-  breeds three English words for one concept and a glossary nobody maintains.
+- **Don't translate the domain vocabulary — in prose.** "Régua", "bandeira", "recusa" are the words
+  the team actually uses, and this is a BR-specific domain (Pix, LGPD, limites de bandeira). In
+  conversation, docs, issues and interface labels, they stay in pt-BR.
+- **In code, the same concept is English — and always the same English.** The route is `/flow`, the
+  menu says "Régua". The risk the rule above guards against is real, so the mapping is fixed here
+  instead of being decided again at each call site:
+
+| pt-BR (fala, docs, interface) | English (code, route, identifier) |
+| ----------------------------- | --------------------------------- |
+| régua                         | flow                              |
+| cobrança                      | charge                            |
+| recusa                        | decline                           |
+| bandeira                      | card brand                        |
+| modelo de mensagem            | template                          |
+| MRR em risco                  | risk                              |
+| co-piloto                     | copilot                           |
+
+A term missing from this table is a term that has not been decided: add the row in the same PR that
+introduces it, so the second person to need it does not invent a synonym.
 
 ## TypeScript & lint
 
