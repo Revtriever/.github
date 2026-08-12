@@ -48,6 +48,8 @@ Three consequences worth spelling out, because each one has already caused a wro
 | modelo de mensagem            | template                          |
 | MRR em risco                  | risk                              |
 | co-piloto                     | copilot                           |
+| campanha                      | campaign                          |
+| achado                        | insight                           |
 
 A term missing from this table is a term that has not been decided: add the row in the same PR that
 introduces it, so the second person to need it does not invent a synonym.
