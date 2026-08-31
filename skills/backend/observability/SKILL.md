@@ -79,6 +79,10 @@ Never log end-customer personal data: name, email, phone, document, card data, P
 content. Log the ids (`customerId`, `chargeId`) instead. Gateway payloads are stored in the events
 table, not in logs. There is no "just this once".
 
+The same line applies to credentials, and a URL is where they hide: the webhook URL of a connection
+ends in the token that authorizes posting settlements as that gateway. Log the shape, mask the
+secret — `https://.../webhooks/sicoob/***`.
+
 ### Cardinality — labels vs structured metadata
 
 Where a field lands decides what it costs. Loki bills by stream: every distinct combination of
@@ -102,7 +106,7 @@ table — same rule as renaming one.
 | `dunning-engine`              | Case run lifecycle, sweep, webhook routing, opt-out, flow seeding | `flowId`, `rootStepId`, `reason`, `concluded`/`suspended`/`queued`/`failed`/`skipped`, `eventType`, `eventId`, `companies`, `cases`, `steps`, `contactId`                                    |
 | `dunning-step`                | Individual step outcomes, scheduling, send guard-rails, branching | `flowId`, `stepId`, `type`, `attempts`, `reason`, `detail`, `wakeAt`, `retryAt`, `switchStepId`, `takenCaseId`, `cancelledCaseIds`, `queue`, `dedupeKey`                                     |
 | `dunning-card-retry`          | Card retry decision and outcome                                   | `flowId`, `stepId`, `chargeId`, `decision`, `declineCode`, `cardBrand`, `reversible`, `cooldownHours`, `attemptsInWindow`, `brandLimit`, `windowHours`, `approved`, `durationMs`, `provider` |
-| `gateways-connection`         | Connect, disconnect, credential verification, webhook arrival     | `provider`, `environment`, `externalAccountId`, `eventId`                                                                                                                                    |
+| `gateways-connection`         | Connect, disconnect, credential verification, webhook arrival     | `provider`, `environment`, `externalAccountId`, `eventId`, `webhookUrl`                                                                                                                      |
 | `identity-auth`               | Login, invite, OTP, TOTP lifecycle, password changes              | `userId`                                                                                                                                                                                     |
 | `auth-refresh-reuse`          | Refresh token reuse — family revoked                              | `familyId`, `revokedSessions`, `userId`                                                                                                                                                      |
 | `identity-company-onboarding` | Company creation                                                  | `companyId`, `ownerUserId`                                                                                                                                                                   |
