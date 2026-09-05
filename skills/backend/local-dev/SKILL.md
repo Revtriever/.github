@@ -47,6 +47,12 @@ Everything runs in `docker compose`; the app runs on the host (`npm run start:de
 - **Webhooks**: `npm run webhook:replay -- <fixture>` posts a stored gateway payload (from
   `test/fixtures/webhooks/`) to the local endpoint — the fixtures double as integration test input.
 - **Email**: just send — Mailpit catches everything. There is no path to a real mailbox from local.
+- **LLM** (copilot, insights narration): `LLM_DRIVER=mock` echoes and costs nothing. `bedrock` uses
+  the AWS credential chain of the dev account and needs every model priced in `LLM_PRICE_TABLE`.
+  `claude-code` runs the machine's own `claude -p` on the developer's plan — no API key, no token in
+  `.env`, it reads the login Claude Code already has; boot refuses it outside `IS_LOCAL=true`. Models
+  are the CLI aliases (`LLM_MODEL_ID=haiku`, `LLM_MODEL_ID_RICH=sonnet`). The tool loop runs inside
+  Claude Code, so per-round model routing, `maxTokens` and `temperature` do not apply there.
 
 ## Safety rails (non-negotiable)
 
