@@ -1,6 +1,17 @@
 # .github
 
-Org-wide defaults: issue templates, labels, project management e as **skills do Claude Code**.
+Repositório de defaults da org **Revtriever**: templates de issue e PR, o README público do perfil,
+o script do project board e as **skills do Claude Code** distribuídas para os outros repos.
+
+```
+.github/
+├── ISSUE_TEMPLATE/       # PRD, feature, bug, tech debt + links de contato
+├── pull_request_template.md
+└── workflows/sync-skills.yml
+profile/README.md         # página pública da org (github.com/Revtriever)
+skills/                   # fonte de verdade das skills do Claude Code
+setup-project.sh          # cria o project board da org
+```
 
 ## Skills — source of truth centralizado
 
@@ -55,6 +66,9 @@ A sync **poda** qualquer skill que não esteja no conjunto canônico do grupo. O
 skill direto no repo destino não adianta — o próximo sync sobrescreve; e criar uma skill local
 solta faz ela sumir.
 
+Cada repo sincronizado ganha um `.claude/skills/.synced-from-org` listando o conjunto canônico e
+os grupos de origem — se o arquivo está lá, o diretório é gerido por este repo.
+
 Se um repo precisa mesmo de uma skill só dele, declare em `keep` no `sync-config.json`:
 
 ```json
@@ -76,6 +90,9 @@ tem escopo do repo onde o workflow roda, então não consegue dar push no `revtr
 Use um **fine-grained PAT** restrito aos dois repos, com `Contents: Read and write`. Nada além
 disso.
 
+Os repos destino também precisam aceitar push direto na `main` pelo bot — se houver ruleset
+bloqueando, a sync falha com `push bloqueado` no log.
+
 ## Workflows
 
 | Workflow        | Trigger                                          | O que faz                                        |
@@ -84,9 +101,37 @@ disso.
 
 ## Issue templates
 
-`.github/ISSUE_TEMPLATE/` — PRD, feature, bug e tech debt.
+`.github/ISSUE_TEMPLATE/` — valem para todos os repos da org que não tenham template próprio.
+
+| Template          | Título    | Labels aplicadas                      |
+| ----------------- | --------- | ------------------------------------- |
+| 📋 PRD (Roadmap)  | `[PRD] `  | `type: prd` · `status: refinement`     |
+| ✨ Feature        | `[FEAT] ` | `type: feature` · `status: refinement` |
+| 🐛 Bug            | `[BUG] `  | `type: bug` · `status: refinement`     |
+| 🧱 Débito técnico | `[TECH] ` | `type: tech-debt` · `status: refinement` |
+
+As labels são aplicadas pelos templates, mas **não são criadas por este repo** — precisam existir
+na org/repo, senão o GitHub ignora silenciosamente. `config.yml` mantém issue em branco habilitada
+e um link de contato para as skills do `revtriever-api`.
+
+## PR template
+
+`.github/pull_request_template.md` — o que muda, por quê, como validar e um checklist de merge
+(lint/typecheck/testes, Swagger, migration aditiva, PII em log, skills atualizadas, custo AWS).
+
+## Perfil público da org
+
+`profile/README.md` é a página renderizada em [github.com/Revtriever](https://github.com/Revtriever).
+Mudou repo ou posicionamento, atualiza lá.
 
 ## Project board
 
-`setup-project.sh` cria o project board da org com os campos de gestão. Requer escopo `project`
-no `gh`.
+`setup-project.sh` cria o project board da org com os campos de gestão (Priority, Size, Work, Area,
+Epic, Target, Spent) e vincula `revtriever-api` e `revtriever-fe`. Requer escopo `project` no `gh`:
+
+```bash
+gh auth refresh -h github.com -s project
+./setup-project.sh
+```
+
+As colunas de Status ficam por conta da UI — sugestão no final do script.
