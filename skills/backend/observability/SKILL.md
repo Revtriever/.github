@@ -128,9 +128,20 @@ table — same rule as renaming one.
 | `negotiation-quota`           | Conversation blocked by plan or monthly limit, simulation limit                  | `block`, `used`, `limit`, `overagePolicy`
 | `negotiation-conversation`    | Agent tool failure inside a live or simulated conversation                       | `sessionId`, `tool`
 | `dunning-negotiation`         | Negotiation session on the ruler: opened, skipped, turn, handoff, closed, reopened, agreement issued/accepted/failed/paid/settled, hourly heartbeat | `stepId`, `sessionId`, `chargeId`, `taskId`, `reason`, `outcome`, `templateName`, `deadlineAt`, `tools`, `delivered`, `durationMs`, `rounds`, `inputTokens`, `outputTokens`, `ref`, `method`, `strategy`, `externalChargeId`, `actor`, `installments`, `concessionId`, `recoveredAmountCents`, `concessionCents`, `open`, `handedOff`, `issuePending`, `oldestIssuePendingHours`
+| `engine-cycle`                | Recurrence engine: generation, issuing, reconciliation, cancels    | `subscriptionId`, `invoiceId`, `cycle`, `outcome`, `reason`, `provider`, `gatewayInvoiceId`, `chargeId`, `routedBy`
+| `engine-api`                  | Public engine API: subscriptions, plans, keys, manual value        | `subscriptionId`, `planId`, `planVersion`, `apiKeyId`, `invoiceItemId`, `completedCycles`, `fulfilled`
+| `engine-census`               | Adoption census of the engine, every 6h, one line per company + summary | `stage`, `activeSubscriptions`, `activePlans`, `activeApiKeys`, `invoicesInWindow`, `paidInWindow`, `paidCentsInWindow`, `overdueOpen`, `heldOpen`, `daysSinceLastInvoice`, `stalled`, `companies*`
+| `fiscal-registration`         | Fiscal profile and per-product service settings                    | `profileId`, `settingId`, `productId`, `nationalServiceCode`, `simplesStatus`, `issRegime`, `cityCode`
+| `fiscal-vault`                | A1 certificate stored, certificate about to expire                 | `certificateId`, `subject`, `notAfter`, `daysLeft`
+| `fiscal-emission`             | NFS-e issued, rejected, skipped, unavailable, stuck, retrying      | `documentId`, `invoiceId`, `accessKey`, `codes`, `reason`, `cause`, `enabled`
+| `fiscal-census`               | Adoption census of NFS-e, every 6h, one line per company + summary | `stage`, `hasCertificate`, `certificateDaysLeft`, `services`, `emissionEnabled`, `issuedInWindow`, `rejectedInWindow`, `skippedInWindow`, `pendingOpen`, `daysSinceLastIssued`, `blocked`, `companies*`
 
-`message` is static by rule, so it is a reliable filter — `| message="dunning send blocked"` is as
-stable as the identifier.
+`message` is static by rule, so it is a reliable filter — but it travels as the **log line**, not as
+structured metadata, so the filter is the line filter: ``|= `dunning send blocked` `` works and
+``| message=`dunning send blocked` `` silently matches nothing (measured against the production
+Loki: 0 hits over 6,246 lines versus 72). Because it is a substring match, two messages where one
+contains the other cannot be told apart — name them so neither is a prefix of the other
+(`... census company` / `... census summary`, never `... census` and `... census summary`).
 
 ## Searching
 
