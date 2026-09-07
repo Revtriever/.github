@@ -125,6 +125,41 @@ patterns into it rather than relying on both to apply.
   change that makes them true — except skills themselves, which live in `Revtriever/.github` and
   are synced (see below).
 
+### The milestone is the join key
+
+An epic ships as a `milestone/<slug>` branch: each card is a PR against that branch, and the branch
+reaches `main` in a single PR. That last PR is **the only one CI and the review ever see** —
+`ci.yml` and `claude-review.yml` both filter `branches: [main]`, so a PR against the milestone runs
+nothing.
+
+Which makes one thing non-optional: **every issue of the epic — the PRD and every card — carries a
+GitHub milestone whose title is exactly the branch slug.**
+
+```
+branch   milestone/negociacao-assistida
+milestone            negociacao-assistida     ← same string, no prose, no accents
+```
+
+Set it when the issue is created (`gh issue create --milestone "<slug>"`), not later. It is what
+lets the reviewer load the whole epic in one call and judge the code against the decisions instead
+of against itself; it is also the gesture that closes the cards when the epic ships.
+
+The title is a slug on purpose. The milestone is a key, not a headline — the readable name of the
+epic already lives in the PRD's title.
+
+### "Fecha #123" does not close anything
+
+Two independent reasons, both verified:
+
+- GitHub only recognises `close/closes/fix/fixes/resolve/resolves` **in English**. `Fecha` is
+  ordinary prose, and no link is recorded — `closingIssuesReferences` comes back empty.
+- Auto-close only fires when the PR merges into the **default branch**. A card PR merges into
+  `milestone/...`, so even `Closes #123` would not fire.
+
+Write `Fecha #123` anyway — it is pt-BR and a human reads it. Just don't expect the board to move:
+**closing the milestone when the epic reaches `main` is a manual step, and it is how the cards get
+closed.** Skipping it is why the board accumulates delivered work marked open.
+
 ## Skills are synced, not edited in place
 
 `.claude/skills/` in this repo is **generated**. The source of truth is `Revtriever/.github` under
