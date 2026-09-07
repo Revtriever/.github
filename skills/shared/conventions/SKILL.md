@@ -144,6 +144,18 @@ Set it when the issue is created (`gh issue create --milestone "<slug>"`), not l
 lets the reviewer load the whole epic in one call and judge the code against the decisions instead
 of against itself; it is also the gesture that closes the cards when the epic ships.
 
+Planning an epic produces **three** things in that milestone, all before the first line of code:
+
+| | |
+|---|---|
+| `type: prd` | one issue — the problem, the solution and the decisions |
+| `type: feature` | one issue per card — a deliverable unit with acceptance criteria |
+| `type: qa` | one issue — the handoff script, executed when the milestone closes (`qa-run`) |
+
+The QA script is written **at planning time, not at the end**. Written afterwards it describes what
+was built; written up front it describes what was promised, and the difference between the two is
+the only thing the round is looking for.
+
 The title is a slug on purpose. The milestone is a key, not a headline — the readable name of the
 epic already lives in the PRD's title.
 

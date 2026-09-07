@@ -59,6 +59,9 @@ gh issue list --milestone "<slug>" --state all --limit 100 --json number,title,l
   discount happens per gateway, what the assistant may never offer, which model runs which turn.
   That is the business knowledge the diff cannot give you.
 - **The cards** are the remaining issues. Read the context and the acceptance criteria of each.
+- **The QA script** is the `type: qa` issue, when there is one. It is not a card and has no code
+  of its own — never report it as undelivered. Read it as a second view of the same promise: a
+  case describing behaviour you cannot find anywhere in the diff is worth a look.
 - A milestone with no PRD is a flat list of cards. Review against the cards and don't invent a
   missing document.
 
