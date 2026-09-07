@@ -166,7 +166,20 @@ no surface for — a frontend PR is not deficient for lacking a migration.
 
 ## Comment format
 
-Open with one line stating how many findings and at what severity. Then one block per finding:
+**On a milestone PR, the first line is the QA round.** Not a verdict, not a gate — a fact, stated
+where the merge decision is made. Read the `type: qa` issue's comments; the newest round is the one
+that counts:
+
+> **Rodada de QA:** 07/09 — 20 ✓ · 1 ✗ · 1 ⊘. O ✗ (#851, cartão do acordo) segue aberto.
+
+> **Rodada de QA:** nenhuma registrada nesta milestone.
+
+Say it even when everything passed, and say it even when you found nothing else — this line is the
+one exception to the silence rule, because its absence is indistinguishable from a clean round.
+Never assert a round happened without a comment to point at, and never soften "nenhuma registrada"
+into something that sounds fine.
+
+Then open the findings with one line stating how many and at what severity. Then one block per finding:
 
 **`path/to/file.ts:123` — what is wrong**
 
