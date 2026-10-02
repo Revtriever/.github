@@ -4,6 +4,8 @@ description: >
   Language split, TypeScript & lint rules, git and PR conventions for every Revtriever repository.
   Use this skill whenever writing new code, naming things, committing, or opening PRs. For NestJS
   DTOs, OpenAPI decorators and the error contract, see the api-conventions skill (backend repos
+  only); for React components, routing, data fetching, forms, styling and tests, see the
+  frontend-architecture, data-fetching, forms, ui-and-styling and testing skills (frontend repos
   only). Triggers on: "naming", "eslint", "prettier", "typedef", "tipagem", "commit", "branch",
   "PR", "convention", "padrão", "estilo".
 ---
@@ -11,7 +13,9 @@ description: >
 # Conventions — Revtriever
 
 Applies to **every** repository in the org. Stack-specific rules live in their own skills
-(`api-conventions`, `architecture`, `data-access`) and are synced only to the repos that need them.
+and are synced only to the repos that need them: `api-conventions`, `architecture`, `data-access`
+and the rest of `skills/backend` for the API; `frontend-architecture`, `data-fetching`, `forms`,
+`ui-and-styling` and `testing` (`skills/frontend`) for the frontend.
 
 ## Language
 
@@ -66,8 +70,10 @@ config, not a difference of opinion.
   annotated; every function/method declares its return type (`explicit-function-return-type` with
   `allowExpressions`, plus `explicit-module-boundary-types`); every class member declares
   accessibility. Also on: `prefer-readonly`, `no-import-type-side-effects`.
-- Small units enforced: `max-lines-per-function: 40`, `complexity: 10`, `max-depth: 3`,
-  `max-params: 8`.
+- Small units enforced: `max-lines-per-function: 40` (**every repo, API and frontend alike** —
+  blank lines don't count), `complexity: 10`, `max-params: 8`. `max-depth` is `2` in the API and
+  `3` in the frontend, where JSX nesting counts. In the frontend the way to stay under 40 is to
+  extract subcomponents and hooks, never to squeeze lines (see the `frontend-architecture` skill).
 - **No `any`** — `unknown` + narrowing. `as` casts need a comment or a type guard instead.
 - **No default exports. No barrel files** (`index.ts` re-exports) — they breed circular imports;
   import from the concrete file.
