@@ -6,7 +6,7 @@
             "repos": ["revtriever-api"]
         },
         "frontend": {
-            "folders": ["shared"],
+            "folders": ["shared", "frontend"],
             "repos": ["revtriever-fe"]
         }
     },
