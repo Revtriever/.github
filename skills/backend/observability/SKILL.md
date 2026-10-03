@@ -13,7 +13,8 @@ description: >
 # Observability — revtriever-api
 
 Structured JSON logs with **pino** (`nest-pino`), traces/metrics with **OpenTelemetry**, everything
-shipped to Grafana Cloud via OTLP. Backend is config only — code never knows about Grafana.
+shipped via OTLP to the backend of the environment: prod on the shared self-hosted Grafana, dev on
+Grafana Cloud. Backend is config only — code never knows about Grafana.
 
 ## Correlation: requestId
 
@@ -88,8 +89,8 @@ secret — `https://.../webhooks/sicoob/***`.
 Where a field lands decides what it costs. Loki bills by stream: every distinct combination of
 **labels** is a new stream, and a tenant id as a label multiplies streams by customer.
 
-- **Labels** (stream selector, `{}`): `service_name`, `deployment_environment_name`, `level`.
-  That list is closed. Adding to it is a capacity decision, not a convenience.
+- **Labels** (stream selector, `{}`): `service_namespace`, `service_name`,
+  `deployment_environment_name`, `level`. That list is closed. Adding to it is a capacity decision, not a convenience.
 - **Structured metadata** (filter with `|`): everything else — `identifier`, `requestId`,
   `companyId`, and every `meta` key. Filtering on these is cheap and does not create streams.
 - **Metric labels**: `companyId` is **never** one. Allowed labels are closed sets — `provider`,
@@ -185,6 +186,9 @@ for; `trace_id` is per-execution plumbing.
 When an investigation needs the raw gateway body, it is in the `GatewayEvents` table, keyed by the
 `eventId` in the log — not in Loki.
 
+**What the access log leaves out**: healthy `/health` probes are not written to the HTTP access log,
+so searches on access lines show real traffic only.
+
 ## Alerting
 
 - **Alert on absence, not only on errors.** The failure mode of this product is silence: a stalled
@@ -237,14 +241,18 @@ handle that survives batching and manual replays — and it is what support asks
 
 ## Connection
 
-Grafana Cloud stack `regalsyrup1014` (free tier, `prod-sa-east-1`). Datasources when writing
-queries: `grafanacloud-prom`, `grafanacloud-logs` (Loki), `grafanacloud-traces` (Tempo).
+**Prod** runs on the shared self-hosted Grafana/LGTM stack at `https://telemetry.revtriever.com`
+(Revtriever prod account, behind Cloudflare Access). It holds one folder per project, and this
+product's datasources are `revtriever-prometheus`, `revtriever-loki` and `revtriever-tempo`. The OTLP
+endpoint is published in SSM `/revtriever/observability/otlp-endpoint`.
+
+**Dev** runs on Grafana Cloud stack `regalsyrup1014` (free tier, `prod-sa-east-1`). Datasources when
+writing dev queries: `grafanacloud-prom`, `grafanacloud-logs` (Loki), `grafanacloud-traces` (Tempo).
 
 Local/dev env values live in `~/.config/revtriever/grafana-otlp.env` (push token in a sibling file;
 the service account token for the Grafana API is `grafana-sa-token`, next to it). In AWS they are
 secrets injected into the task. Exporter is OTLP http/protobuf; switching backends is an env change,
-never a code change. Self-hosting the LGTM stack is a deliberate future decision, triggered only
-when Grafana Cloud free tier limits actually hurt.
+never a code change.
 
 **Logs travel the same pipe as traces.** A pino transport turns each line into an OTLP LogRecord and
 ships it through the gateway already configured — one exporter, one auth, and `service.name` matches
