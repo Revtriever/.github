@@ -12,10 +12,18 @@ description: >
 
 ## Accounts & environments
 
-Two workload accounts, one environment each: **dev** (`406658519138`) and **prod**
-(`510439383746`). Management (`743976413871`) holds org/billing/SSO only — **nothing deploys
-there, ever**. Region: **us-east-1**. Local AWS access: SSO profiles `revtriever-dev` /
-`revtriever-prod` (`aws sso login --sso-session revtriever`).
+Two workload accounts, one environment each: **dev** and **prod**. Their IDs live in the GitHub
+repository variables `AWS_ACCOUNT_ID_DEV` / `AWS_ACCOUNT_ID_PROD`, never in the code. The management
+account holds org/billing/SSO only — **nothing deploys there, ever**. Region: **us-east-1**. Local AWS
+access: SSO profiles `revtriever-dev` / `revtriever-prod` (`aws sso login --sso-session revtriever`).
+
+The CDK config reads account IDs and personal data from the environment (`fromEnvironment` in
+`infra/config/environment.ts`): `AWS_ACCOUNT_ID_DEV`, `AWS_ACCOUNT_ID_PROD`, `DEV_EXTRA_MAIL_RECIPIENTS`,
+`ONBOARDING_SKIP_PHONES`. The account IDs are required (the synth fails naming the missing one); the two
+lists are optional and empty means "none". The deploy workflows pass the repository variables; to run
+`cdk synth`/`diff` locally, export the same variables first (`gh variable list -R Revtriever/revtriever-api`).
+Under the test runners a placeholder account is used instead. Availability zones are seeded in `infra/bin/revtriever.ts`, so
+there is no committed `cdk.context.json`.
 
 ## CDK (TypeScript, `infra/` in this repo)
 
