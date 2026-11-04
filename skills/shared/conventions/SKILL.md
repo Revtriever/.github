@@ -125,8 +125,12 @@ patterns into it rather than relying on both to apply.
   `test:`, `ci:`). Scope optional but encouraged: `feat(identity): ...`. `subject-case` rejects a
   leading uppercase — write the subject lowercase.
 - Hooks (husky): pre-commit = lint-staged (ESLint fix + Prettier on staged files only);
-  pre-push = typecheck + unit tests; commit-msg = commitlint. Hooks are convenience — **CI is the
-  enforcement** and re-runs everything in full.
+  pre-push = typecheck + unit tests; commit-msg = commitlint. Hooks are convenience.
+- **CI runs only on push to `main`** (full verify, coverage, Sonar; prod deploys only after it). A PR is
+  validated on the machine that opens it: run `npm run ci:local` after pushing — same steps as `ci.yml`
+  (scoped to the diff in nexu-api), and it posts the `ci/local` commit status, `success` or `failure` with
+  the failing step. The status is informative, not a merge gate; a break that slips through shows up in
+  the `main` CI and is fixed forward. Claude Review, evals and `cdk diff` still run on the PR.
 - PRs: small, one concern. Description says WHY. Skill/doc updates ride in the same PR as the
   change that makes them true — except skills themselves, which live in `Revtriever/.github` and
   are synced (see below).
@@ -134,9 +138,9 @@ patterns into it rather than relying on both to apply.
 ### The milestone is the join key
 
 An epic ships as a `milestone/<slug>` branch: each card is a PR against that branch, and the branch
-reaches `main` in a single PR. That last PR is **the only one CI and the review ever see** —
-`ci.yml` and `claude-review.yml` both filter `branches: [main]`, so a PR against the milestone runs
-nothing.
+reaches `main` in a single PR. That last PR is **the only one the review ever sees** —
+`claude-review.yml` filters `branches: [main]`, so a PR against the milestone runs nothing; run
+`npm run ci:local` on it like on any PR.
 
 Which makes one thing non-optional: **every issue of the epic — the PRD and every card — carries a
 GitHub milestone whose title is exactly the branch slug.**

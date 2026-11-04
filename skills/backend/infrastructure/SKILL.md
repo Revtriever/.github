@@ -73,7 +73,7 @@ rotation lambdas).
 - **Auth = OIDC only**: each workflow assumes a deploy role in the matching account (dev workflow
   physically cannot touch prod). Zero long-lived AWS keys in GitHub — if a workflow asks for
   `AWS_ACCESS_KEY_ID`, the workflow is wrong.
-- Hooks are local convenience; **CI is the enforcement** (conventions skill).
+- Hooks are local convenience. The PR is checked by `npm run ci:local`; the `main` CI is the full verify (conventions skill).
 
 ## Cost guardrails (side-project reality)
 
