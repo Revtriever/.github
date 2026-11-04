@@ -127,10 +127,10 @@ patterns into it rather than relying on both to apply.
 - Hooks (husky): pre-commit = lint-staged (ESLint fix + Prettier on staged files only);
   pre-push = typecheck + unit tests; commit-msg = commitlint. Hooks are convenience.
 - **CI runs only on push to `main`** (full verify, coverage, Sonar; prod deploys only after it). A PR is
-  validated on the machine that opens it: run `npm run ci:local` after pushing — same steps as `ci.yml`
-  (scoped to the diff in nexu-api), and it posts the `ci/local` commit status, `success` or `failure` with
-  the failing step. The status is informative, not a merge gate; a break that slips through shows up in
-  the `main` CI and is fixed forward. Claude Review, evals and `cdk diff` still run on the PR.
+  validated on the machine that opens it: run `npm run ci:local` — same steps as `ci.yml`
+  (scoped to the diff in nexu-api) — and report the result: it prints on the terminal whether it passed or
+  which step failed, and posts nothing to GitHub. It is not a merge gate; a break that slips through shows
+  up in the `main` CI and is fixed forward. Claude Review, evals and `cdk diff` still run on the PR.
 - PRs: small, one concern. Description says WHY. Skill/doc updates ride in the same PR as the
   change that makes them true — except skills themselves, which live in `Revtriever/.github` and
   are synced (see below).
